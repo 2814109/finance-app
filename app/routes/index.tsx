@@ -3,13 +3,14 @@ export let meta = () => {
     title: "Remix Secrets App",
   };
 };
-export default function Index() {
+const Index = () => {
   return (
     <div className="remix__page">
       <main>
-        <h2>Remix Secrets</h2>
-        <p>Save all your secret stuff here!</p>
+        <h1>Remix Site</h1>
       </main>
     </div>
   );
-}
+};
+
+export default Index;

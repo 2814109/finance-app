@@ -3,19 +3,6 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "hosting": {
-    "public": "public",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [
-      {
-        "source": "**",
-        "run": {
-          "serviceId": "<Your cloud run service name>"
-        }
-      }
-    ]
-  },
-
   "emulators": {
     "auth": {
       "port": 9099
