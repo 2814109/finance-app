@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { getUser } from "~/server/user.server";
+import { getUser } from "~/libs/getUser";
 import { json, redirect } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
 
