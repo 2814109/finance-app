@@ -17,12 +17,23 @@ export const action: ActionFunction = async ({ request }) => {
   let email = String(formData.get("email"));
   let password = String(formData.get("password"));
 
-  //   await auth.signOut();
-  //setup user data
-  await createUserWithEmailAndPassword(auth, email, password);
+  type AuthError = { code: string };
 
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    const isAuthError = (error: unknown): error is AuthError => {
+      const object = error as AuthError;
+
+      return typeof object.code === "string";
+    };
+
+    if (isAuthError(error)) {
+      return { error: error.code };
+    }
+  }
   // perform firebase register
-  return redirect("/");
+  return redirect("/dashboard");
 };
 
 export default function SiginIn() {
