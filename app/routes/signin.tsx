@@ -4,6 +4,7 @@ import { Form, Link, useActionData } from "@remix-run/react";
 import { LoaderFunction, ActionFunction } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/node";
 import { getUser } from "~/libs/auth/getUser";
+import errorMessage from "~/const/auth/ErrorMessage";
 
 // ログイン状態の場合はdashboardへ遷移
 export const loader: LoaderFunction = async ({ request }) => {
@@ -38,6 +39,8 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function SiginIn() {
   const actionData = useActionData();
+  const displayedErrorMessage = errorMessage(actionData?.error);
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="px-8 py-6 mt-4 text-left bg-white shadow-lg">
@@ -68,15 +71,15 @@ export default function SiginIn() {
           >
             Sigin In
           </button>
+          <div className="text-red-500">
+            {actionData?.error ? displayedErrorMessage : null}
+          </div>
         </Form>
         <div className="flex items-baseline justify-between">
           Already Registered?
           <Link className="text-sm text-blue-600 hover:underline" to="/login">
             Login
           </Link>
-        </div>
-        <div className="errors">
-          {actionData?.error ? actionData?.error?.message : null}
         </div>
       </div>
     </div>
