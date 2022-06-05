@@ -4,7 +4,7 @@ import InputItem from "~/components/Items/Form/InputItem";
 import firebase from "~/components/firebase/index";
 import auth from "~/components/firebase/auth";
 // import getUser from "~/components/firebase/getUser";
-import { getUser } from "~/server/user.server";
+import { getUser } from "~/libs/getUser";
 import { LoaderFunction } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/node";
 
