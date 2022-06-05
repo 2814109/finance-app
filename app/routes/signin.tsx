@@ -1,26 +1,15 @@
 import auth from "~/components/firebase/auth";
 import { createUserWithEmailAndPassword } from "@firebase/auth";
 import { Form, Link, useActionData } from "@remix-run/react";
-import { getSession, commitSession } from "~/sessions.server";
-import { json, redirect } from "@remix-run/node";
 import { LoaderFunction, ActionFunction } from "@remix-run/server-runtime";
+import { redirect } from "@remix-run/node";
+import { getUser } from "~/libs/auth/getUser";
 
+// ログイン状態の場合はdashboardへ遷移
 export const loader: LoaderFunction = async ({ request }) => {
-  const session = await getSession(request.headers.get("Cookie"));
-
-  if (session.has("access_token")) {
-    // Redirect to the blog page if they are already signed in.
-    //   console.log('user has existing cookie')
-    return redirect("/dashboard");
-  }
-
-  const data = { error: session.get("error") };
-
-  return json(data, {
-    headers: {
-      "Set-Cookie": await commitSession(session),
-    },
-  });
+  const user = await getUser();
+  if (user) return redirect("/dashboard");
+  return {};
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -28,22 +17,12 @@ export const action: ActionFunction = async ({ request }) => {
   let email = String(formData.get("email"));
   let password = String(formData.get("password"));
 
-  //perform a signout to clear any active sessions
-  await auth.signOut();
+  //   await auth.signOut();
   //setup user data
-  let { user } = await createUserWithEmailAndPassword(auth, email, password);
+  await createUserWithEmailAndPassword(auth, email, password);
 
-  if (user) {
-    let session = await getSession(request.headers.get("Cookie"));
-    session.set("access_token", auth.currentUser?.getIdToken());
-    return redirect("/dashboard", {
-      headers: {
-        "Set-Cookie": await commitSession(session),
-      },
-    });
-  }
   // perform firebase register
-  return { user };
+  return redirect("/");
 };
 
 export default function SiginIn() {
