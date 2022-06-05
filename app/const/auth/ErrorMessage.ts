@@ -1,5 +1,7 @@
 const errorMessage = (code: string): string => {
   switch (code) {
+    case "auth/email-already-in-use":
+      return "既に登録されているメールアドレスです";
     case "auth/invalid-email":
       return "メールアドレスの形式が不正です";
     case "auth/user-disabled":
