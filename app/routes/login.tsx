@@ -1,47 +1,60 @@
-import { FC, ChangeEvent } from "react";
+import { FC, ChangeEvent, useEffect } from "react";
 import { Form } from "@remix-run/react";
 import InputItem from "~/components/Items/Form/InputItem";
+import firebase from "~/components/firebase/index";
+import auth from "~/components/firebase/auth";
+// import getUser from "~/components/firebase/getUser";
+import { getUser } from "~/server/user.server";
+import { LoaderFunction } from "@remix-run/server-runtime";
+import { json, redirect } from "@remix-run/node";
+
+export const loader: LoaderFunction = async () => {
+  const user = await getUser();
+
+  if (user) redirect("/dashboard");
+  return json({});
+};
+
 const Login: FC = () => {
   return (
-    <div className="flex flex-col h-screen">
-      <div className="bg-gray-100 flex-auto">
-        <div className="flex justify-center mt-20">
-          <div className="w-9/12 border bg-white">
-            <div className="my-16 text-center">
-              <h2 className="text-4xl font-bold">ログイン</h2>
-              <Form action="/form/login" method="post" className="mt-12">
-                <div className="mb-3">
-                  <InputItem
-                    className="text-xl w-7/12 p-3 border rounded"
-                    required
-                    value=""
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => {}}
-                    type="email"
-                    placeholder="sample@example.com"
-                    name="email"
-                  />
-                </div>
-                <div className="mb-5">
-                  <InputItem
-                    required
-                    value=""
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => {}}
-                    type="password"
-                    placeholder="パスワード"
-                    name="password"
-                    className="text-xl w-7/12 p-3 border rounded"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="mb-3 text-xl w-4/12 bg-blue-800 text-white py-2 rounded hover:opacity-75"
-                >
-                  ログイン
-                </button>
-              </Form>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="px-8 py-6 mt-4 text-left bg-white shadow-lg">
+        <h3 className="text-2xl font-bold text-center">
+          Login to your account
+        </h3>
+        <Form action="">
+          <div className="mt-4">
+            <div>
+              <label className="block" htmlFor="email">
+                Email
+              </label>
+              <input
+                type="text"
+                placeholder="Email"
+                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+            <div className="mt-4">
+              <label className="block">Password</label>
+              <input
+                type="password"
+                placeholder="Password"
+                className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+              />
+            </div>
+            <div className="flex items-baseline justify-between">
+              <button className="px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900">
+                Login
+              </button>
+              <a
+                href="/signin"
+                className="text-sm text-blue-600 hover:underline"
+              >
+                Forgot password?
+              </a>
             </div>
           </div>
-        </div>
+        </Form>
       </div>
     </div>
   );

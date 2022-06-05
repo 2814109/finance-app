@@ -1,4 +1,3 @@
-import { initializeApp } from "firebase/app";
 const firebaseConfig = {
   apiKey: process.env.API_KEY,
   authDomain: process.env.AUTH_DOMAIN,
@@ -9,4 +8,4 @@ const firebaseConfig = {
   measurementId: process.env.MEASUREMENT_ID,
 };
 
-export const app = initializeApp(firebaseConfig);
+export default firebaseConfig;
