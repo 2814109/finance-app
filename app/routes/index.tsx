@@ -1,8 +1,3 @@
-import firebaseConfig from "~/components/firebase/config";
-import type { LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
-
 export let meta = () => {
   return {
     title: "Remix Secrets App",
