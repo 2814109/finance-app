@@ -8,12 +8,12 @@ import { getUser } from "~/libs/getUser";
 import { LoaderFunction } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/node";
 
-export const loader: LoaderFunction = async () => {
-  const user = await getUser();
+// export const loader: LoaderFunction = async () => {
+//   const user = await getUser();
 
-  if (user) redirect("/dashboard");
-  return json({});
-};
+//   if (user) redirect("/dashboard");
+//   return json({});
+// };
 
 const Login: FC = () => {
   return (
