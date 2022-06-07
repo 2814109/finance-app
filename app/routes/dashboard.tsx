@@ -12,9 +12,9 @@ import { useLoaderData } from "@remix-run/react";
 export const loader: LoaderFunction = async () => {
   const user = await getUser();
 
-  if (!user) return redirect("/signin");
+  if (!user) return redirect("/login");
 
-  const storageRef = ref(storage, "Abundantia-logo-white.png");
+  const storageRef = ref(storage, process.env.HEADER_IMAGE_FILE_NAME);
   const url = await getDownloadURL(storageRef);
   return json({
     url,
