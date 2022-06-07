@@ -8,6 +8,7 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import styles from "./styles/app.css";
+import { RecoilRoot } from "recoil";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
@@ -20,17 +21,19 @@ export const meta: MetaFunction = () => ({
 
 export default function App() {
   return (
-    <html lang="en">
-      <head>
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
-      </body>
-    </html>
+    <RecoilRoot>
+      <html lang="en">
+        <head>
+          <Meta />
+          <Links />
+        </head>
+        <body>
+          <Outlet />
+          <ScrollRestoration />
+          <Scripts />
+          <LiveReload />
+        </body>
+      </html>
+    </RecoilRoot>
   );
 }
