@@ -7,7 +7,7 @@ import { useSetRecoilState } from "recoil";
 import HeaderIconState from "~/state/HeaderIcon";
 import type { LoaderFunction } from "@remix-run/node";
 import Layout from "~/components/Layout";
-import { useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 
 export const loader: LoaderFunction = async () => {
   const user = await getUser();
@@ -28,7 +28,7 @@ const DashboardIndex: FC = () => {
 
   return (
     <Layout>
-      <h1>test</h1>
+      <Outlet />
     </Layout>
   );
 };

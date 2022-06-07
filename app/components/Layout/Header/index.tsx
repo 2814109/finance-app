@@ -288,8 +288,7 @@ export default function Example() {
                               href="#"
                               className="font-medium text-indigo-600 hover:text-indigo-500"
                             >
-                              {" "}
-                              View all posts{" "}
+                              View all posts
                               <span aria-hidden="true">&rarr;</span>
                             </a>
                           </div>
@@ -302,24 +301,10 @@ export default function Example() {
             </Popover>
           </Popover.Group>
           <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-            {/* <a
-              href="#"
-              className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900"
-            >
-              Sign in
-            </a> */}
-            {/* <a
-              href="#"
-              className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-            >
-              Sign up
-            </a> */}
             <Form method="post" action="/logout">
               <button
                 type="submit"
                 className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-
-                //className="hidden sm:flex rounded bg-red-500 px-3 py-2 text-white hover:bg-red-300 active:bg-red-500"
               >
                 Logout
               </button>
@@ -404,38 +389,14 @@ export default function Example() {
                 ))}
               </div>
               <div>
-                {/* <a
-                  href="#"
-                  className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-                >
-                  Sign up
-                </a> */}
-
                 <Form method="post" action="/logout">
                   <button
                     type="submit"
                     className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
-                    //className="hidden sm:flex rounded bg-red-500 px-3 py-2 text-white hover:bg-red-300 active:bg-red-500"
                   >
                     Logout
                   </button>
                 </Form>
-
-                {/*<p className="mt-6 text-center text-base font-medium text-gray-500">
-                  Existing customer?{" "}
-                  <a href="#" className="text-indigo-600 hover:text-indigo-500">
-                    Sign in
-                  </a>
-                   <Form method="post" action="/logout">
-                    <button
-                      type="submit"
-                      className="text-indigo-600 hover:text-indigo-500"
-                      //className="hidden sm:flex rounded bg-red-500 px-3 py-2 text-white hover:bg-red-300 active:bg-red-500"
-                    >
-                      Logout
-                    </button>
-                  </Form> 
-                </p>*/}
               </div>
             </div>
           </div>
@@ -444,37 +405,3 @@ export default function Example() {
     </Popover>
   );
 }
-
-//     // <div className="bg-black">
-//     //   <div className="flex justify-between  mx-5">
-//     //     <div className="flex">
-//     //       <img className="h-20 object-cover mr-5" src={headerIconUrl} />
-//     //       <ul className="hidden sm:flex sm:items-center">
-//     //         <li className="mr-6">
-//     //           <a className="text-blue-500 hover:text-blue-800" href="#">
-//     //             Active
-//     //           </a>
-//     //         </li>
-//     //         <li className="mr-6">
-//     //           <a className="text-blue-500 hover:text-blue-800" href="#">
-//     //             Link
-//     //           </a>
-//     //         </li>
-//     //       </ul>
-//     //     </div>
-//     //     <div className="flex items-center">
-//     //       <Form method="post" action="/logout">
-//     //         <button
-//     //           type="submit"
-//     //           className="hidden sm:flex rounded bg-red-500 px-3 py-2 text-white hover:bg-red-300 active:bg-red-500"
-//     //         >
-//     //           Logout
-//     //         </button>
-//     //       </Form>
-//     //     </div>
-//     //   </div>
-//     // </div>
-//   );
-// };
-
-// export default Header;
