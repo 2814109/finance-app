@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { json, LoaderFunction } from "@remix-run/node";
+import { json, LoaderFunction, redirect } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import AccountForm from "~/components/Items/AccountForm";
@@ -53,7 +53,7 @@ export const action: ActionFunction = async ({ request }) => {
     collection(firestore, `finance/${user?.uid}/${periodKey}`),
     docData
   );
-  return null;
+  return redirect("");
 };
 
 const MonthlyAccounts: FC = () => {
