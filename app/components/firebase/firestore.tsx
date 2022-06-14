@@ -1,4 +1,6 @@
 import { getFirestore } from "firebase/firestore";
-const firestore = getFirestore();
+import firebase from "./index";
+
+const firestore = getFirestore(firebase);
 
 export default firestore;
