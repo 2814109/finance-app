@@ -1,8 +1,6 @@
-/* This example requires Tailwind CSS v2.0+ */
 import { Form } from "@remix-run/react";
 import HeaderIconState from "~/state/HeaderIcon";
 import { useRecoilValue } from "recoil";
-
 import { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { ChartBarIcon, MenuIcon, XIcon } from "@heroicons/react/outline";

@@ -12,6 +12,13 @@ import { DocumentData } from "firebase/firestore";
 
 import ReportList from "~/components/Items/ReportTable/index";
 
+import {
+  ArrowCircleLeftIcon,
+  ArrowCircleRightIcon,
+} from "@heroicons/react/outline";
+
+import { Link } from "@remix-run/react";
+
 type Report = {
   id: string;
   period: Timestamp;
@@ -46,14 +53,12 @@ export const loader: LoaderFunction = async ({ params }) => {
   const resposeData: DocumentData[] = [];
   monthlyDocsSnapshot.forEach((doc) => {
     resposeData.push(doc.data());
-    console.log(doc.id, " => ", doc.data());
   });
   return json({ periodKey, docs: resposeData });
 };
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
-  const periodKey = String(formData.get("periodKey"));
   const item = String(formData.get("item"));
   const price = Number(formData.get("price"));
   const period = String(formData.get("period"));
@@ -77,9 +82,48 @@ export const action: ActionFunction = async ({ request }) => {
 const MonthlyAccounts: FC = () => {
   const { periodKey, docs }: { periodKey: string; docs: Report[] } =
     useLoaderData();
+  const year = Number(periodKey.slice(0, 4));
+  const month = periodKey.slice(-2);
+
+  const onClickNextMonth = () => {
+    const keyDate = new Date(Number(year), Number(month), 1);
+    const nextMonthDate = new Date(
+      keyDate.getFullYear(),
+      keyDate.getMonth() + 1,
+      keyDate.getDate()
+    );
+
+    const nextMonth = ("0" + nextMonthDate.getMonth()).slice(-2);
+    return `${nextMonthDate.getFullYear()}${nextMonth}`;
+  };
+
+  const onClickpreviousMonth = () => {
+    const keyDate = new Date(Number(year), Number(month), 1);
+    const lastMonthDate = new Date(
+      keyDate.getFullYear(),
+      keyDate.getMonth() - 1,
+      keyDate.getDate()
+    );
+
+    const lastMonth = ("0" + lastMonthDate.getMonth()).slice(-2);
+    return `${lastMonthDate.getFullYear()}${lastMonth}`;
+  };
 
   return (
     <div>
+      <div className="flex justify-between p-3">
+        <Link to={`/dashboard/accounts/monthly/${onClickpreviousMonth()}`}>
+          <ArrowCircleLeftIcon
+            className="h-8 w-8 cursor-pointer"
+            onClick={() => onClickpreviousMonth()}
+          />
+        </Link>
+
+        <span className="font-mono">{`${year}年${month}月`}</span>
+        <Link to={`/dashboard/accounts/monthly/${onClickNextMonth()}`}>
+          <ArrowCircleRightIcon className="h-8 w-8 cursor-pointer" />
+        </Link>
+      </div>
       <AccountForm periodKey={periodKey} />
 
       <ReportList reports={docs} />
