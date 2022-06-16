@@ -5,7 +5,7 @@ import { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { ChartBarIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { ChevronDownIcon } from "@heroicons/react/solid";
-
+import { memo, FC } from "react";
 const solutions = [
   {
     name: "Monthly",
@@ -20,7 +20,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Header() {
+const Header: FC = () => {
   const headerIconUrl = useRecoilValue(HeaderIconState);
 
   return (
@@ -179,4 +179,6 @@ export default function Header() {
       </Transition>
     </Popover>
   );
-}
+};
+
+export default memo(Header);
