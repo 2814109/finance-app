@@ -28,7 +28,7 @@ const DashboardIndex: FC = () => {
 
   return (
     <Layout>
-      <div className="flex justify-center py-4">
+      <div className="flex justify-center p-4">
         <Outlet />
       </div>
     </Layout>
