@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { getUser } from "~/libs/auth/getUser";
+import { getSession } from "~/session";
 import { json, redirect } from "@remix-run/node";
 import { ref, getDownloadURL } from "firebase/storage";
 import storage from "~/components/firebase/storage";
@@ -9,10 +9,14 @@ import type { LoaderFunction } from "@remix-run/node";
 import Layout from "~/components/Layout";
 import { Outlet, useLoaderData } from "@remix-run/react";
 
-export const loader: LoaderFunction = async () => {
-  const user = await getUser();
+export const loader: LoaderFunction = async ({ request }) => {
+  const session = await getSession(request.headers.get("Cookie"));
+  console.log("##");
+  console.log(session.get("user_id"));
 
-  if (!user) return redirect("/login");
+  if (!session.has("access_token")) {
+    return redirect("/login");
+  }
 
   const storageRef = ref(storage, process.env.HEADER_IMAGE_FILE_NAME);
   const url = await getDownloadURL(storageRef);

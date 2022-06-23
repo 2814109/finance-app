@@ -1,5 +1,5 @@
 import { FC } from "react";
 const Index: FC = () => {
-  return <></>;
+  return null;
 };
 export default Index;

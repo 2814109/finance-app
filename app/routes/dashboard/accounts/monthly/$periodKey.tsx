@@ -1,15 +1,13 @@
 import { FC } from "react";
-import { json, LoaderFunction, redirect } from "@remix-run/node";
+import { json, LoaderFunction } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import AccountForm from "~/components/Items/AccountForm";
 import firestore from "~/components/firebase/firestore";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { getDocs, startAt, endAt, query, orderBy } from "firebase/firestore";
-
-import { getUser } from "~/libs/auth/getUser";
+import { getSession } from "~/session";
 import { DocumentData } from "firebase/firestore";
-
 import ReportList from "~/components/Items/ReportTable/index";
 
 import {
@@ -26,9 +24,9 @@ type Report = {
   price: number;
   type: string;
 };
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ request, params }) => {
   const periodKey = params.periodKey;
-  const user = await getUser();
+  const session = await getSession(request.headers.get("Cookie"));
 
   if (!(periodKey?.length === 6 && typeof periodKey === "string")) return;
   const year = Number(periodKey.slice(0, 4));
@@ -44,7 +42,7 @@ export const loader: LoaderFunction = async ({ params }) => {
     new Date(`${year}/${month}/${endOfMonth.getDate()} 00:00:00`)
   );
   const docRef = query(
-    collection(firestore, `${user?.uid}`),
+    collection(firestore, `${session.get("user_id")}`),
     orderBy("period"),
     startAt(sinceAtDate),
     endAt(recentAtDate)
@@ -63,9 +61,9 @@ export const action: ActionFunction = async ({ request }) => {
   const price = Number(formData.get("price"));
   const period = String(formData.get("period"));
   const type = String(formData.get("type"));
-  const user = await getUser();
+  const session = await getSession();
 
-  if (user?.uid === undefined) {
+  if (session?.id === undefined) {
     return json({ status: 403 });
   }
 
@@ -75,7 +73,7 @@ export const action: ActionFunction = async ({ request }) => {
     period: period === "" ? new Date() : new Date(period),
     type,
   };
-  await addDoc(collection(firestore, `${user?.uid}`), docData);
+  await addDoc(collection(firestore, `${session.get("user_id")}`), docData);
   return {};
 };
 

@@ -2,15 +2,26 @@ import auth from "~/components/firebase/auth";
 import { createUserWithEmailAndPassword } from "@firebase/auth";
 import { Form, Link, useActionData } from "@remix-run/react";
 import { LoaderFunction, ActionFunction } from "@remix-run/server-runtime";
-import { redirect } from "@remix-run/node";
-import { getUser } from "~/libs/auth/getUser";
+import { json, redirect } from "@remix-run/node";
+import { getSession, commitSession } from "~/session";
 import errorMessage from "~/const/auth/ErrorMessage";
+
+const redirectPath = "/dashboard";
 
 // ログイン状態の場合はdashboardへ遷移
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await getUser();
-  if (user) return redirect("/dashboard");
-  return {};
+  const session = await getSession(request.headers.get("Cookie"));
+
+  if (session.has("access_token")) {
+    return redirect(redirectPath);
+  }
+  const data = { error: session.get("error") };
+
+  return json(data, {
+    headers: {
+      "Set-Cookie": await commitSession(session),
+    },
+  });
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -20,8 +31,24 @@ export const action: ActionFunction = async ({ request }) => {
 
   type AuthError = { code: string };
 
+  await auth.signOut();
+
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
+    const { user } = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    const session = await getSession(request.headers.get("Cookie"));
+    session.set("access_token", user);
+    session.set("user_id", user.uid);
+
+    return redirect(redirectPath, {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
   } catch (error) {
     const isAuthError = (error: unknown): error is AuthError => {
       const object = error as AuthError;
@@ -34,7 +61,7 @@ export const action: ActionFunction = async ({ request }) => {
     }
   }
   // perform firebase register
-  return redirect("/dashboard");
+  return redirect(redirectPath);
 };
 
 export default function SiginIn() {

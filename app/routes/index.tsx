@@ -1,10 +1,13 @@
-import { getUser } from "~/libs/auth/getUser";
+import { getSession } from "~/session";
 import { LoaderFunction } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/node";
 
 // ログイン状態の場合はdashboardへ遷移
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await getUser();
-  if (user) return redirect("/dashboard");
-  return redirect("/login");
+  let session = await getSession(request.headers.get("Cookie"));
+  if (!session.has("access_token")) {
+    return redirect("/login");
+  } else {
+    return redirect("/dashboard");
+  }
 };

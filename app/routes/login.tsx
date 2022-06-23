@@ -5,16 +5,25 @@ import { FC } from "react";
 import { Form, Link, useActionData } from "@remix-run/react";
 import errorMessage from "~/const/auth/ErrorMessage";
 import { redirect } from "@remix-run/node";
-import { getUser } from "~/libs/auth/getUser";
+import { getSession, commitSession } from "~/session";
+import { json } from "@remix-run/node";
 
-// post時に以下のActionがコールされる
 type AuthError = { code: string };
 
-// ログイン状態の場合はdashboardへ遷移
+const redirectPath = "/dashboard";
+
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await getUser();
-  if (user) return redirect("/dashboard");
-  return {};
+  const session = await getSession(request.headers.get("Cookie"));
+  if (session.has("access_token")) {
+    return redirect(redirectPath);
+  }
+  const data = { error: session.get("error") };
+
+  return json(data, {
+    headers: {
+      "Set-Cookie": await commitSession(session),
+    },
+  });
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -22,8 +31,20 @@ export const action: ActionFunction = async ({ request }) => {
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    const { user } = await signInWithEmailAndPassword(auth, email, password);
+
+    const session = await getSession(request.headers.get("Cookie"));
+    session.set("access_token", await user.getIdToken());
+    session.set("user_id", user.uid);
+
+    // let's send the user to the main page after login
+    return redirect(redirectPath, {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    });
   } catch (error) {
+    console.log("error");
     const isAuthError = (error: unknown): error is AuthError => {
       const object = error as AuthError;
 
