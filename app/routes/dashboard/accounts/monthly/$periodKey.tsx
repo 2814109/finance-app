@@ -67,7 +67,7 @@ export const action: ActionFunction = async ({ request }) => {
   const type = String(formData.get("type"));
   const session = await getSession();
 
-  if (session?.id === undefined) {
+  if (session.get("user_id") === undefined) {
     return json({ status: 403 });
   }
 
@@ -77,7 +77,7 @@ export const action: ActionFunction = async ({ request }) => {
     period: period === "" ? new Date() : new Date(period),
     type,
   };
-  await addDoc(collection(firestore, `${session.get("user_id")}`), docData);
+  await addDoc(collection(firestore, session.get("user_id")), docData);
   return {};
 };
 
