@@ -8,15 +8,15 @@ import HeaderIconState from "~/state/HeaderIcon";
 import type { LoaderFunction } from "@remix-run/node";
 import Layout from "~/components/Layout";
 import { Outlet, useLoaderData } from "@remix-run/react";
+import auth from "~/components/firebase/auth";
 
 export const loader: LoaderFunction = async ({ request }) => {
   const session = await getSession(request.headers.get("Cookie"));
-  console.log("##");
-  console.log(session.get("user_id"));
 
   if (!session.has("access_token")) {
     return redirect("/login");
   }
+  auth.currentUser?.getIdToken(session.get("user_id"));
 
   const storageRef = ref(storage, process.env.HEADER_IMAGE_FILE_NAME);
   const url = await getDownloadURL(storageRef);

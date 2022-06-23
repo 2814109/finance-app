@@ -43,8 +43,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     new Date(`${year}/${month}/${endOfMonth.getDate()} 00:00:00`)
   );
 
-  auth.currentUser?.getIdToken(session.get("user_id"));
-
   const docRef = query(
     collection(firestore, `${session.get("user_id")}`),
     orderBy("period"),
