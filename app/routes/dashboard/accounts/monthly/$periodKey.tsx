@@ -16,6 +16,7 @@ import {
 } from "@heroicons/react/outline";
 
 import { Link } from "@remix-run/react";
+import auth from "~/components/firebase/auth";
 
 type Report = {
   id: string;
@@ -41,6 +42,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const recentAtDate = Timestamp.fromDate(
     new Date(`${year}/${month}/${endOfMonth.getDate()} 00:00:00`)
   );
+
+  auth.currentUser?.getIdToken(session.get("user_id"));
+
   const docRef = query(
     collection(firestore, `${session.get("user_id")}`),
     orderBy("period"),
