@@ -3,7 +3,7 @@ import { createUserWithEmailAndPassword } from "@firebase/auth";
 import { Form, Link, useActionData } from "@remix-run/react";
 import { LoaderFunction, ActionFunction } from "@remix-run/server-runtime";
 import { json, redirect } from "@remix-run/node";
-import { getSession, commitSession } from "~/session";
+import { getSession, commitSession } from "~/sessions";
 import errorMessage from "~/const/auth/ErrorMessage";
 
 const redirectPath = "/dashboard";
@@ -42,7 +42,6 @@ export const action: ActionFunction = async ({ request }) => {
 
     const session = await getSession(request.headers.get("Cookie"));
     session.set("access_token", user);
-    session.set("user_id", user.uid);
 
     return redirect(redirectPath, {
       headers: {

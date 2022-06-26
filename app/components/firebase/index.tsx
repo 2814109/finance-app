@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import Config from "./config";
 
-const firebase = initializeApp(Config);
+const firebaseClient = initializeApp(Config, "Front");
 
-export default firebase;
+export default firebaseClient;

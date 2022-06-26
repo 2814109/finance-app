@@ -12,7 +12,7 @@ import { RecoilRoot } from "recoil";
 import auth from "~/components/firebase/auth";
 import { LoaderFunction, ActionFunction } from "@remix-run/server-runtime";
 import { json } from "@remix-run/node";
-import { getSession, commitSession } from "~/session";
+import { getSession, commitSession } from "~/sessions";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];

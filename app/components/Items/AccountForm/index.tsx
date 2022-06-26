@@ -11,6 +11,7 @@ const AccountForm: FC<Props> = ({ periodKey }) => {
   return (
     <Form className="w-full " method="post">
       <input type="hidden" value={periodKey} name="periodKey" />
+
       <div className="flex flex-wrap -mx-3 mb-6">
         <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
           <LabelItem htmlFor="grid-item" title="品目" />

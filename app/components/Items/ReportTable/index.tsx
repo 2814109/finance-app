@@ -1,13 +1,6 @@
 import { FC } from "react";
-import { Timestamp } from "firebase/firestore";
+import { Report } from "~/types/Report";
 
-type Report = {
-  id: string;
-  item: string;
-  price: number;
-  type: string;
-  period: Timestamp;
-};
 type Props = {
   reports: Report[];
 };
@@ -45,12 +38,7 @@ const ReportTable: FC<Props> = ({ reports }) => {
                     <TableData data={report.item} titleKey="item" />
                     <TableData data={report.price} titleKey="price" />
                     <TableData data={report.type} titleKey="type" />
-                    <TableData
-                      data={String(
-                        new Date(report.period.seconds * 1000).toLocaleString()
-                      )}
-                      titleKey="period"
-                    />
+                    <TableData data={String(report.period)} titleKey="period" />
                   </tr>
                 );
               })}

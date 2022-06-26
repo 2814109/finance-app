@@ -1,11 +1,11 @@
 import { Form } from "@remix-run/react";
 import HeaderIconState from "~/state/HeaderIcon";
 import { useRecoilValue } from "recoil";
-import { Fragment } from "react";
+import { FC, Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { ChartBarIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import { ChevronDownIcon } from "@heroicons/react/solid";
-import { memo, FC } from "react";
+import { memo } from "react";
 const solutions = [
   {
     name: "Monthly",

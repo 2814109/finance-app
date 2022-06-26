@@ -3,59 +3,40 @@ import { json, LoaderFunction } from "@remix-run/node";
 import type { ActionFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import AccountForm from "~/components/Items/AccountForm";
-import firestore from "~/components/firebase/firestore";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
-import { getDocs, startAt, endAt, query, orderBy } from "firebase/firestore";
-import { getSession } from "~/session";
-import { DocumentData } from "firebase/firestore";
+import { getSession } from "~/sessions";
 import ReportList from "~/components/Items/ReportTable/index";
-
+import {
+  getUid,
+  getMonthlyReport,
+  addDoc,
+  convertToTimestamp,
+} from "~/firebaseAdmin.server";
 import {
   ArrowCircleLeftIcon,
   ArrowCircleRightIcon,
 } from "@heroicons/react/outline";
+import { Report } from "~/types/Report";
 
 import { Link } from "@remix-run/react";
-import auth from "~/components/firebase/auth";
 
-type Report = {
-  id: string;
-  period: Timestamp;
-  item: string;
-  price: number;
-  type: string;
-};
+type OriginReport = Omit<Report, "id">;
+
 export const loader: LoaderFunction = async ({ request, params }) => {
   const periodKey = params.periodKey;
   const session = await getSession(request.headers.get("Cookie"));
+  const beVerifiedtoken = session.get("access_token");
+
+  const uid = await getUid(String(beVerifiedtoken));
+  console.log(`check ${uid}`);
 
   if (!(periodKey?.length === 6 && typeof periodKey === "string")) return;
-  const year = Number(periodKey.slice(0, 4));
-  const month = periodKey.slice(-2);
 
-  const keyDate = new Date(Number(year), Number(month), 1);
-  const endOfMonth = new Date(keyDate.getFullYear(), keyDate.getMonth() + 1, 0);
+  const report = await getMonthlyReport(uid, periodKey);
 
-  const sinceAtDate = Timestamp.fromDate(
-    new Date(`${year}/${month}/01 00:00:00`)
-  );
-  const recentAtDate = Timestamp.fromDate(
-    new Date(`${year}/${month}/${endOfMonth.getDate()} 00:00:00`)
-  );
-
-  const docRef = query(
-    collection(firestore, `${session.get("user_id")}`),
-    orderBy("period"),
-    startAt(sinceAtDate),
-    endAt(recentAtDate)
-  );
-  const monthlyDocsSnapshot = await getDocs(docRef);
-  const resposeData: DocumentData[] = [];
-  monthlyDocsSnapshot.forEach((doc) => {
-    resposeData.push(doc.data());
-  });
-  return json({ periodKey, docs: resposeData });
+  return json({ periodKey, docs: report });
 };
+
+// Actionの処理はクライアントサイドで実行される？
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
@@ -63,25 +44,31 @@ export const action: ActionFunction = async ({ request }) => {
   const price = Number(formData.get("price"));
   const period = String(formData.get("period"));
   const type = String(formData.get("type"));
-  const session = await getSession();
+  const session = await getSession(request.headers.get("Cookie"));
+  const beVerifiedtoken = session.get("access_token");
 
-  if (session.get("user_id") === undefined) {
-    return json({ status: 403 });
-  }
+  const uid = await getUid(String(beVerifiedtoken));
 
-  const docData = {
+  const postDate = period === "" ? new Date() : new Date(period);
+
+  const docData: OriginReport = {
     item,
     price,
-    period: period === "" ? new Date() : new Date(period),
+    // clientのTimestamp型定義が必要　firebase-admin の型定義はバックエンドの処理になるらしい
+    period: convertToTimestamp(postDate),
     type,
   };
-  await addDoc(collection(firestore, session.get("user_id")), docData);
+
+  console.log(`check ${uid}`);
+  addDoc(uid, docData);
+
   return {};
 };
 
 const MonthlyAccounts: FC = () => {
   const { periodKey, docs }: { periodKey: string; docs: Report[] } =
     useLoaderData();
+
   const year = Number(periodKey.slice(0, 4));
   const month = periodKey.slice(-2);
 
@@ -97,7 +84,7 @@ const MonthlyAccounts: FC = () => {
     return `${nextMonthDate.getFullYear()}${nextMonth}`;
   };
 
-  const onClickpreviousMonth = () => {
+  const onClickPreviousMonth = () => {
     const keyDate = new Date(Number(year), Number(month), 1);
     const lastMonthDate = new Date(
       keyDate.getFullYear(),
@@ -112,10 +99,10 @@ const MonthlyAccounts: FC = () => {
   return (
     <div>
       <div className="flex justify-between p-3">
-        <Link to={`/dashboard/accounts/monthly/${onClickpreviousMonth()}`}>
+        <Link to={`/dashboard/accounts/monthly/${onClickPreviousMonth()}`}>
           <ArrowCircleLeftIcon
             className="h-8 w-8 cursor-pointer"
-            onClick={() => onClickpreviousMonth()}
+            onClick={() => onClickPreviousMonth()}
           />
         </Link>
 

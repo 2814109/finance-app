@@ -5,7 +5,7 @@ import { FC } from "react";
 import { Form, Link, useActionData } from "@remix-run/react";
 import errorMessage from "~/const/auth/ErrorMessage";
 import { redirect } from "@remix-run/node";
-import { getSession, commitSession } from "~/session";
+import { getSession, commitSession } from "~/sessions";
 import { json } from "@remix-run/node";
 
 type AuthError = { code: string };
@@ -35,7 +35,6 @@ export const action: ActionFunction = async ({ request }) => {
 
     const session = await getSession(request.headers.get("Cookie"));
     session.set("access_token", await user.getIdToken());
-    session.set("user_id", user.uid);
 
     // let's send the user to the main page after login
     return redirect(redirectPath, {

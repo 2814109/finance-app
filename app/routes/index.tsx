@@ -1,4 +1,4 @@
-import { getSession } from "~/session";
+import { getSession } from "~/sessions";
 import { LoaderFunction } from "@remix-run/server-runtime";
 import { redirect } from "@remix-run/node";
 
@@ -7,7 +7,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   let session = await getSession(request.headers.get("Cookie"));
   if (!session.has("access_token")) {
     return redirect("/login");
-  } else {
-    return redirect("/dashboard");
   }
+  return redirect("/dashboard");
 };
