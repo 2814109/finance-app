@@ -89,3 +89,7 @@ export const addDoc = (collectionName: string, postData: OriginReport) => {
 export const convertToTimestamp = (date: Date) => {
   return Timestamp.fromDate(date);
 };
+
+export const deleteReport = (collectionName: string, reportId: string) => {
+  admin.firestore().collection(collectionName).doc(reportId).delete();
+};

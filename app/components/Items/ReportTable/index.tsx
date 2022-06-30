@@ -1,11 +1,19 @@
+import { Form } from "@remix-run/react";
 import { FC } from "react";
 import { Report } from "~/types/Report";
+import DeleteButton from "./DeleteButton";
 
 type Props = {
   reports: Report[];
 };
 
-const titles = { item: "品目", price: "金額", type: "タイプ", period: "時間" };
+const titles = {
+  item: "品目",
+  price: "金額",
+  type: "タイプ",
+  period: "時間",
+  action: "",
+};
 
 type TitleType = typeof titles;
 
@@ -39,6 +47,9 @@ const ReportTable: FC<Props> = ({ reports }) => {
                     <TableData data={report.price} titleKey="price" />
                     <TableData data={report.type} titleKey="type" />
                     <TableData data={String(report.period)} titleKey="period" />
+                    <td className="pl-4 ali-center text-left relative border-gray-400">
+                      <DeleteButton reportId={report.id} />
+                    </td>
                   </tr>
                 );
               })}
