@@ -3,16 +3,26 @@ import HeaderIconState from "~/state/HeaderIcon";
 import { useRecoilValue } from "recoil";
 import { FC, Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
-import { ChartBarIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+import {
+  ChartBarIcon,
+  MenuIcon,
+  XIcon,
+  CollectionIcon,
+} from "@heroicons/react/outline";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { memo } from "react";
 const solutions = [
   {
     name: "Monthly",
-    description:
-      "Get a better understanding of where your traffic is coming from.",
+    description: "Monthly expense reports can be managed",
     href: "/dashboard/accounts/monthly/",
     icon: ChartBarIcon,
+  },
+  {
+    name: "BulkInsert",
+    description: "A large amount of data can be registered at once",
+    href: "/dashboard/accounts/bulk_insert/",
+    icon: CollectionIcon,
   },
 ];
 
@@ -28,7 +38,7 @@ const Header: FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
           <div className="flex justify-start lg:w-0 lg:flex-1">
-            <a href="#">
+            <a href="/">
               <span className="sr-only">Workflow</span>
               <img className="h-16 w-auto sm:h-18" src={headerIconUrl} alt="" />
             </a>

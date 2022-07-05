@@ -1,11 +1,17 @@
 import firebaseAuthConfig from "~/components/firebaseAdmin/config";
 import { ServiceAccount } from "firebase-admin/app";
 import { DocumentData } from "firebase-admin/firestore";
-import { Timestamp } from "firebase-admin/firestore";
+import { Timestamp, BulkWriter } from "firebase-admin/firestore";
 import admin from "firebase-admin";
 import { Report } from "./types/Report";
 
 type OriginReport = Omit<Report, "id">;
+type InsertRecord = {
+  item: string;
+  price: number;
+  type: string;
+  period: string;
+};
 
 const serviceAccount = firebaseAuthConfig as ServiceAccount;
 
@@ -92,4 +98,40 @@ export const convertToTimestamp = (date: Date) => {
 
 export const deleteReport = (collectionName: string, reportId: string) => {
   admin.firestore().collection(collectionName).doc(reportId).delete();
+};
+
+export const bulkInsert = async (collectionName: string, csvFile: Blob) => {
+  const csvText = await csvFile.text();
+  const arrayText = csvText.split("\r\n").map((row) => row.split(","));
+  arrayText.shift();
+
+  const insertDataList: InsertRecord[] = arrayText.map((data) => ({
+    item: data[0],
+    price: Number(data[1]),
+    type: data[2],
+    period: data[3],
+  }));
+
+  console.log(arrayText);
+
+  const date = new Date();
+
+  const testData = ({ item, price, type, period }: InsertRecord) => {
+    return {
+      period: Timestamp.fromDate(new Date(period)),
+      item: item,
+      price: price,
+      type: type,
+    };
+  };
+  const firestore = admin.firestore();
+
+  const bulkWriter: BulkWriter = firestore.bulkWriter();
+
+  insertDataList.forEach((InsertData) => {
+    const documentRef = firestore.collection(collectionName).doc();
+    bulkWriter.set(documentRef, testData(InsertData));
+  });
+
+  await bulkWriter.close();
 };

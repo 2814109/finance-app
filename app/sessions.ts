@@ -8,9 +8,9 @@ const { getSession, commitSession, destroySession } =
       name: "__session",
 
       // all of these are optional
-      expires: new Date(Date.now() + 600),
+      // expires: new Date(Date.now() + 600),
       httpOnly: true,
-      maxAge: 600,
+      maxAge: 3600,
       path: "/",
       sameSite: "lax",
       secrets: [`${process.env.SESSION_SECRET}`],
