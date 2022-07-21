@@ -169,8 +169,6 @@ export const bulkInsert = async (collectionName: string, csvFile: Blob) => {
   const arrayText = csvText.split("\r\n").map((row) => row.split(","));
   arrayText.shift();
 
-  console.log(arrayText);
-
   const insertDataList: InsertRecord[] = arrayText.map((data) => ({
     item: data[0],
     price: Number(data[1]),

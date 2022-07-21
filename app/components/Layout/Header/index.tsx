@@ -34,7 +34,7 @@ const analysis = [
   {
     name: "Monthly Report",
     description: "Monthly expense reports can be managed",
-    href: "/dashboard/accountant/monthly/",
+    href: "/dashboard/analysis/monthly/",
     icon: DocumentReportIcon,
   },
   {

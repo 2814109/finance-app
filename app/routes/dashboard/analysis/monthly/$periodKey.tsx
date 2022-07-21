@@ -17,12 +17,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const beVerifiedtoken = session.get("access_token");
 
   const uid = await getUid(String(beVerifiedtoken));
-  console.log(`check ${uid}`);
-
   if (!(periodKey?.length === 6 && typeof periodKey === "string")) return;
-
   const report = await getMonthlyReport(uid, periodKey);
-
   return json({ periodKey, docs: report });
 };
 
@@ -100,7 +96,7 @@ const MonthlyAccounts: FC = () => {
   return (
     <div>
       <div className="flex justify-between p-3">
-        <Link to={`/dashboard/accountant/monthly/${onClickPreviousMonth()}`}>
+        <Link to={`/dashboard/analysis/monthly/${onClickPreviousMonth()}`}>
           <ArrowCircleLeftIcon
             className="h-8 w-8 cursor-pointer"
             onClick={() => onClickPreviousMonth()}
@@ -109,17 +105,31 @@ const MonthlyAccounts: FC = () => {
 
         <span className="font-mono">{`${year}年${month}月`}</span>
 
-        <Link to={`/dashboard/accountant/monthly/${onClickNextMonth()}`}>
+        <Link to={`/dashboard/analysis/monthly/${onClickNextMonth()}`}>
           <ArrowCircleRightIcon className="h-8 w-8 cursor-pointer" />
         </Link>
       </div>
 
-      <MUIDataTable
-        title={"Monthly Report"}
-        data={docs}
-        columns={columns}
-        options={options}
-      />
+      <p>支出</p>
+      <p>内訳</p>
+      <p>固定費</p>
+      <p>変動費</p>
+
+      <p>収入</p>
+      <p>内訳</p>
+      <p>固定費</p>
+      <p>変動費</p>
+
+      <p>合計</p>
+
+      <div className="z-0">
+        <MUIDataTable
+          title={"Monthly Report"}
+          data={docs}
+          columns={columns}
+          options={options}
+        />
+      </div>
     </div>
   );
 };
