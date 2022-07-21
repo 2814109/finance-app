@@ -7,3 +7,5 @@ export type Report = {
   price: number;
   type: string;
 };
+
+export type IsDisplayedReport = Omit<Report, "period"> & { period: string };

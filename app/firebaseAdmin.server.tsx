@@ -3,7 +3,7 @@ import { ServiceAccount } from "firebase-admin/app";
 import { DocumentData } from "firebase-admin/firestore";
 import { Timestamp, BulkWriter } from "firebase-admin/firestore";
 import admin from "firebase-admin";
-import { Report } from "./types/Report";
+import { Report, IsDisplayedReport } from "./types/Report";
 
 type OriginReport = Omit<Report, "id">;
 type InsertRecord = {
@@ -33,6 +33,70 @@ export const getUid = async (token: string) => {
       console.log("### invalid token");
     });
   return uid;
+};
+
+export const getAllReport = async (collectionName: string) => {
+  const resposeData: IsDisplayedReport[] = [];
+
+  const document = admin
+    .firestore()
+    .collection(collectionName)
+    .orderBy("period");
+  (await document.get()).docs.forEach((doc) => {
+    // ユーザ定義型ガードを実装
+    const getData: unknown = doc.data();
+    if (isOriginReport(getData)) {
+      const { period, ...othreData } = getData;
+      resposeData.push({
+        id: doc.id,
+        period: period.toDate().toLocaleString(),
+        ...othreData,
+      });
+    } else {
+      console.log("user type guard error");
+    }
+  });
+  return resposeData;
+};
+
+export const createLineGraphData = async (
+  originReposts: IsDisplayedReport[]
+) => {
+  const formatDateforCalendar = (date: string) => {
+    return new Date(date).getTime();
+  };
+
+  const expenseList = originReposts
+    .filter((report) => {
+      return Math.sign(report.price) === -1;
+    })
+    .map((report) => ({
+      ...report,
+      period: formatDateforCalendar(report.period),
+    }));
+
+  const calendarList = expenseList.map((report) => report.period);
+
+  const setCalendar = [...new Set(calendarList)];
+  const totalExpences: { calendar: number; totalExpense: number }[] = [];
+  setCalendar.forEach((keyCalendar) => {
+    const sameCalendarReport = expenseList
+      .filter((report) => {
+        return report.period === keyCalendar;
+      })
+      .map((report) => report.price);
+
+    const totalExpenseForCalendar = sameCalendarReport.reduce(
+      (prev, current) => prev + current,
+      0
+    );
+
+    totalExpences.push({
+      calendar: keyCalendar,
+      totalExpense: Math.abs(totalExpenseForCalendar),
+    });
+  });
+  return totalExpences;
 };
 
 export const getMonthlyReport = async (
@@ -105,18 +169,16 @@ export const bulkInsert = async (collectionName: string, csvFile: Blob) => {
   const arrayText = csvText.split("\r\n").map((row) => row.split(","));
   arrayText.shift();
 
+  console.log(arrayText);
+
   const insertDataList: InsertRecord[] = arrayText.map((data) => ({
     item: data[0],
     price: Number(data[1]),
     type: data[2],
-    period: data[3],
+    period: String(data[3]),
   }));
 
-  console.log(arrayText);
-
-  const date = new Date();
-
-  const testData = ({ item, price, type, period }: InsertRecord) => {
+  const createData = ({ item, price, type, period }: InsertRecord) => {
     return {
       period: Timestamp.fromDate(new Date(period)),
       item: item,
@@ -130,8 +192,54 @@ export const bulkInsert = async (collectionName: string, csvFile: Blob) => {
 
   insertDataList.forEach((InsertData) => {
     const documentRef = firestore.collection(collectionName).doc();
-    bulkWriter.set(documentRef, testData(InsertData));
+    bulkWriter.set(documentRef, createData(InsertData));
   });
 
   await bulkWriter.close();
+};
+
+export const createExpenseItemsData = async (
+  originReposts: IsDisplayedReport[]
+) => {
+  const expenseList = originReposts.filter((report) => {
+    return Math.sign(report.price) === -1;
+  });
+
+  const denominatorExpense = expenseList
+    .map((report) => report.price)
+    .reduce((prev, current) => prev + current, 0);
+
+  const itemList = expenseList.map((report) => report.item);
+  const uniqueItems = [...new Set(itemList)];
+
+  const totalExpences: {
+    itemName: string;
+    totalExpense: number;
+    count: number;
+    average: number;
+    proportion: number;
+  }[] = [];
+
+  uniqueItems.forEach((keyItem) => {
+    const sameItemReport = expenseList
+      .filter((report) => {
+        return report.item === keyItem;
+      })
+      .map((report) => report.price);
+
+    const totalExpenseForItem = sameItemReport.reduce(
+      (prev, current) => prev + current,
+      0
+    );
+
+    totalExpences.push({
+      itemName: keyItem,
+      totalExpense: Math.abs(totalExpenseForItem),
+      count: sameItemReport.length,
+      average: Math.abs(totalExpenseForItem) / sameItemReport.length,
+      proportion:
+        (Math.abs(totalExpenseForItem) / Math.abs(denominatorExpense)) * 100,
+    });
+  });
+  return totalExpences;
 };

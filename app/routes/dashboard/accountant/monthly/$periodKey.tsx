@@ -99,7 +99,7 @@ const MonthlyAccounts: FC = () => {
   return (
     <div>
       <div className="flex justify-between p-3">
-        <Link to={`/dashboard/accounts/monthly/${onClickPreviousMonth()}`}>
+        <Link to={`/dashboard/accountant/monthly/${onClickPreviousMonth()}`}>
           <ArrowCircleLeftIcon
             className="h-8 w-8 cursor-pointer"
             onClick={() => onClickPreviousMonth()}
@@ -107,7 +107,7 @@ const MonthlyAccounts: FC = () => {
         </Link>
 
         <span className="font-mono">{`${year}年${month}月`}</span>
-        <Link to={`/dashboard/accounts/monthly/${onClickNextMonth()}`}>
+        <Link to={`/dashboard/accountant/monthly/${onClickNextMonth()}`}>
           <ArrowCircleRightIcon className="h-8 w-8 cursor-pointer" />
         </Link>
       </div>

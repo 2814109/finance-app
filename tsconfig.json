@@ -4,7 +4,8 @@
     "**/*.ts",
     "**/*.tsx",
     "app/sessions.tsx",
-    "app/session.server.js"
+    "app/session.server.js",
+    "app/routes/dashboard/analysis/tree_map/index.jsx"
   ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2019"],

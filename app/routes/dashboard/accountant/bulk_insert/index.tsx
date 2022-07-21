@@ -10,7 +10,6 @@ export const action: ActionFunction = async ({ request }) => {
   const beVerifiedtoken = session.get("access_token");
 
   const uid = await getUid(String(beVerifiedtoken));
-
   const formData = await request.formData();
   const bulkInsertFile = formData.getAll("bulkInsertFile");
   const blob = new Blob(bulkInsertFile, { type: "text/csv" });
