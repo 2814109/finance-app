@@ -1,25 +1,15 @@
 import { FC } from "react";
 import { json, LoaderFunction } from "@remix-run/node";
-import type { ActionFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import AccountForm from "~/components/Items/AccountForm";
 import { getSession } from "~/sessions";
-import ReportList from "~/components/Items/ReportTable/index";
-import {
-  getUid,
-  getMonthlyReport,
-  addDoc,
-  convertToTimestamp,
-} from "~/firebaseAdmin.server";
+import { getUid, getMonthlyReport } from "~/firebaseAdmin.server";
 import {
   ArrowCircleLeftIcon,
   ArrowCircleRightIcon,
 } from "@heroicons/react/outline";
 import { Report } from "~/types/Report";
-
 import { Link } from "@remix-run/react";
-
-type OriginReport = Omit<Report, "id">;
+import MUIDataTable from "mui-datatables";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const periodKey = params.periodKey;
@@ -34,35 +24,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const report = await getMonthlyReport(uid, periodKey);
 
   return json({ periodKey, docs: report });
-};
-
-// Actionの処理はクライアントサイドで実行される？
-
-export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-  const item = String(formData.get("item"));
-  const price = Number(formData.get("price"));
-  const period = String(formData.get("period"));
-  const type = String(formData.get("type"));
-  const session = await getSession(request.headers.get("Cookie"));
-  const beVerifiedtoken = session.get("access_token");
-
-  const uid = await getUid(String(beVerifiedtoken));
-
-  const postDate = period === "" ? new Date() : new Date(period);
-
-  const docData: OriginReport = {
-    item,
-    price,
-    // clientのTimestamp型定義が必要　firebase-admin の型定義はバックエンドの処理になるらしい
-    period: convertToTimestamp(postDate),
-    type,
-  };
-
-  console.log(`check ${uid}`);
-  addDoc(uid, docData);
-
-  return {};
 };
 
 const MonthlyAccounts: FC = () => {
@@ -96,6 +57,46 @@ const MonthlyAccounts: FC = () => {
     return `${lastMonthDate.getFullYear()}${lastMonth}`;
   };
 
+  const columns = [
+    {
+      name: "item",
+      label: "Item",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "price",
+      label: "Price",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "type",
+      label: "Type",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "period",
+      label: "Period",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+  ];
+
+  const options = {
+    selectableRowsHeader: false,
+    selectableRowsHideCheckboxes: true,
+  };
+
   return (
     <div>
       <div className="flex justify-between p-3">
@@ -107,13 +108,18 @@ const MonthlyAccounts: FC = () => {
         </Link>
 
         <span className="font-mono">{`${year}年${month}月`}</span>
+
         <Link to={`/dashboard/accountant/monthly/${onClickNextMonth()}`}>
           <ArrowCircleRightIcon className="h-8 w-8 cursor-pointer" />
         </Link>
       </div>
-      <AccountForm periodKey={periodKey} />
 
-      <ReportList reports={docs} />
+      <MUIDataTable
+        title={"Monthly Report"}
+        data={docs}
+        columns={columns}
+        options={options}
+      />
     </div>
   );
 };

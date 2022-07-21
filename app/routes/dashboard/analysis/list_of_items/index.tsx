@@ -23,7 +23,6 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 const ListOfItems: FC = () => {
   const { expenseItemsData }: { expenseItemsData: any } = useLoaderData();
-  console.log(expenseItemsData);
 
   const columns = [
     {

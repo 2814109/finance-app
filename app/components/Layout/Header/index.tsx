@@ -10,27 +10,33 @@ import {
   CollectionIcon,
   DocumentReportIcon,
   TableIcon,
-  TemplateIcon,
+  PlusIcon,
 } from "@heroicons/react/outline";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { memo } from "react";
 
 const accountant = [
   {
-    name: "Monthly Report",
-    description: "Monthly expense reports can be managed",
-    href: "/dashboard/accountant/monthly/",
-    icon: DocumentReportIcon,
-  },
-  {
     name: "Bulk Insert",
     description: "A large amount of data can be registered at once",
     href: "/dashboard/accountant/bulk_insert/",
     icon: CollectionIcon,
   },
+  {
+    name: "Insert",
+    description: "Register data",
+    href: "/dashboard/accountant/insert/",
+    icon: PlusIcon,
+  },
 ];
 
 const analysis = [
+  {
+    name: "Monthly Report",
+    description: "Monthly expense reports can be managed",
+    href: "/dashboard/accountant/monthly/",
+    icon: DocumentReportIcon,
+  },
   {
     name: "Transition",
     description: "Analyze expenditures",
