@@ -41,7 +41,7 @@ export const action: ActionFunction = async ({ request }) => {
     );
 
     const session = await getSession(request.headers.get("Cookie"));
-    session.set("access_token", user);
+    session.set("access_token", await user.getIdToken());
 
     return redirect(redirectPath, {
       headers: {

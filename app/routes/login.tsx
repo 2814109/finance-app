@@ -2,7 +2,7 @@ import { LoaderFunction, ActionFunction } from "@remix-run/server-runtime";
 import { signInWithEmailAndPassword } from "@firebase/auth";
 import auth from "~/components/firebase/auth";
 import { FC } from "react";
-import { Form, Link, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData, useTransition } from "@remix-run/react";
 import errorMessage from "~/const/auth/ErrorMessage";
 import { redirect } from "@remix-run/node";
 import { getSession, commitSession } from "~/sessions";
@@ -60,6 +60,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 const Login: FC = () => {
   const actionData = useActionData();
+  const transition = useTransition();
   const displayedErrorMessage = errorMessage(actionData?.error);
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -86,12 +87,14 @@ const Login: FC = () => {
               name="password"
               required
             />
-            <button
-              className="px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900"
-              type="submit"
-            >
-              Login
-            </button>
+            {!transition.submission && (
+              <button
+                className="px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900"
+                type="submit"
+              >
+                Login
+              </button>
+            )}
           </div>
           <div className="text-red-500">
             {actionData?.error ? displayedErrorMessage : null}
